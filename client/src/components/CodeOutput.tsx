@@ -12,9 +12,7 @@ const CodeOutput: React.FC<OutputSectionProps> = ({ output, error }) => {
         <div className="flex items-center px-4 justify-end w-full p-2 min-h-[50px]"></div>
       </div>
       <div className="h-[calc(100vh-123px)]">
-        {output && (
-          <pre dangerouslySetInnerHTML={{ __html: formattedOutput }} />
-        )}
+        {output && <p>{formattedOutput}</p>}
         {error && <p>{error}</p>}
       </div>
     </div>

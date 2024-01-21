@@ -66,7 +66,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ onExecuteCode }) => {
         editorProps={{ $blockScrolling: true }}
         enableBasicAutocompletion={true}
         enableLiveAutocompletion={true}
-        style={{ height: "calc(100vh - 123px)", width: "100%" }}
+        style={{ height: "calc(100vh - 114px)", width: "100%" }}
         fontSize="18px"
       />
     </div>
