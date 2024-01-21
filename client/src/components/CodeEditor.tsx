@@ -1,6 +1,7 @@
 import "ace-builds/src-noconflict/ext-language_tools";
 import React, { useState } from "react";
 import AceEditor from "react-ace";
+import ButtonLoader from "./ButtonLoader";
 
 interface CodeEditorProps {
   onExecuteCode: (code: string) => Promise<void>;
@@ -30,8 +31,8 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ onExecuteCode }) => {
   };
 
   return (
-    <div className="flex-1 border-r bg-[#272822] border-r-gray-600 h-full">
-      <div className="flex h-full bg-[#2D2F34] border-b border-b-gray-700">
+    <div className="flex-[2] border-r bg-[#272822] border-r-gray-600 h-full">
+      <div className="flex h-full bg-[#2D2F34] border-b border-b-gray-700 min-h-[50px]">
         <p className="bg-[#272822] text-white p-2 border-x border-gray-700 text-center flex items-center ml-[41px] justify-center">
           <span>index.py</span>
         </p>
@@ -46,10 +47,13 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ onExecuteCode }) => {
             <option value="solarized_dark">Solarized Dark</option>
           </select>
           <button
+            disabled={isLoading}
             onClick={executePythonCode}
-            className="bg-blue-700 hover:bg-blue-800 text-white px-4 py-2 font-bold"
+            className={`bg-blue-700 hover:bg-blue-800 text-white flex items-center justify-center px-4 py-2 w-24 font-bold ${
+              isLoading ? "cursor-not-allowed" : "cursor-pointer"
+            }`}
           >
-            {isLoading ? "Executing..." : "RUN"}
+            {isLoading ? <ButtonLoader /> : "RUN"}
           </button>
         </div>
       </div>

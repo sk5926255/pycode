@@ -4,15 +4,13 @@ import CodeOutput from "./components/CodeOutput";
 
 const App: React.FC = () => {
   const [output, setOutput] = useState<string>("");
-  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const executeCode = async (code: string): Promise<void> => {
-    setIsLoading(true);
     setOutput(""); // Clear output state
     try {
       // Call the backend to execute code
-      const response = await fetch("http://localhost:9000/execute/python", {
+      const response = await fetch("http://localhost:4001/execute/python", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -34,8 +32,6 @@ const App: React.FC = () => {
     } catch (error) {
       console.error("Error executing Python code:", error);
       // throw error;
-    } finally {
-      setIsLoading(false);
     }
   };
 
