@@ -1,8 +1,9 @@
-const { PythonShell } = require("python-shell");
 const express = require("express");
 const { writeFileSync } = require("fs");
 const router = express.Router();
 const fs = require("fs");
+const { exec } = require("child_process");
+const e = require("express");
 
 const createTemporaryScript = (code) => {
   const tempScriptPath = "/tmp/temporary_script.py";
@@ -11,46 +12,18 @@ const createTemporaryScript = (code) => {
 };
 
 router.post("/python", async (req, res) => {
-  const { code } = req.body;
+  const { code, input } = req.body;
 
-  try {
-    const tempScriptPath = createTemporaryScript(code);
-    const pythonShell = new PythonShell(tempScriptPath);
+  console.log(req.body, "req.body");
 
-    pythonShell.send(code);
+  const fileName = "main.py";
 
-    // Capture output and error streams:
-    let output = "";
-    let error = "";
+  require("fs").writeFileSync(fileName, code);
 
-    pythonShell.on("message", (message) => {
-      output += message;
-    });
-
-    pythonShell.on("error", (error) => {
-      console.error(error);
-      error += err.message; // Include the error message in the response
-    });
-
-    // Wait for the script to finish:
-    await new Promise((resolve, reject) => {
-      pythonShell.end((err, code, signal) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve();
-        }
-      });
-    });
-
-    fs.unlinkSync(tempScriptPath);
-
-    // Send the response:
-    res.json(output);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: error.message });
-  }
+  const command = `echo ${input} | python ${fileName}`;
+  const child = exec(command, { input }, (error, stdout, stderr) => {
+    res.json({ stdout, stderr, error });
+  });
 });
 
 module.exports = router;
