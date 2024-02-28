@@ -1,11 +1,7 @@
 import { useState } from "react";
 
-interface InputSectionProps {
-  onUserInputChange: (input: string) => void;
-}
-const CodeInput: React.FC<InputSectionProps> = ({ onUserInputChange }) => {
+const CodeInput = () => {
   const [userInput, setUserInput] = useState<string>("");
-  const [inputMessage, setInputMessage] = useState<string | null>(null);
 
   return (
     <div className="text-white h-full flex-1  bg-[#272822]">
@@ -22,9 +18,7 @@ const CodeInput: React.FC<InputSectionProps> = ({ onUserInputChange }) => {
           className="w-full outline-none bg-[#272822] text-white p-4"
         />
 
-        <button onClick={() => onUserInputChange(userInput)}>
-          Submit Input
-        </button>
+        <button>Submit Input</button>
       </div>
     </div>
   );

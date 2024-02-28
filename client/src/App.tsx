@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import CodeEditor from "./components/CodeEditor";
+import { io } from "socket.io-client";
 import CodeOutput from "./components/CodeOutput";
 import CodeInput from "./components/CodeInput";
 
@@ -21,7 +22,43 @@ const App: React.FC = () => {
     error: { code: 0, killed: false, signal: null, cmd: "" },
   });
   const [error, setError] = useState<string | null>(null);
-  const [userInput, setUserInput] = useState<string>("");
+
+  const socket = io("http://localhost:4001");
+
+  useEffect(() => {
+    socket.on("connect", () => {
+      console.log("Connected to server");
+    });
+
+    socket.on("scriptResult", (data) => {
+      setOutput((prevState) => ({
+        ...prevState,
+        stdout: data.stdout || prevState.stdout,
+        stderr: data.stderr || prevState.stderr,
+      }));
+      console.log("Received script result:", output);
+    });
+
+    socket.on("input", (data) => {
+      console.log("Received input request:", data);
+      setError("Input request received");
+    });
+
+    socket.on("executionFinished", (data) => {
+      console.log("Execution finished:", data);
+      if (data.code !== 0) {
+        setError(`Execution finished with code ${data.code}`);
+      }
+    });
+
+    socket.on("disconnect", () => {
+      console.log("Disconnected from server");
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, [socket, error]);
 
   const executeCode = async (code: string): Promise<void> => {
     setOutput({
@@ -29,29 +66,8 @@ const App: React.FC = () => {
       stderr: "",
       error: { code: 0, killed: false, signal: null, cmd: "" },
     });
-    try {
-      // Call the backend to execute code
-      const response = await fetch("http://localhost:4001/execute/python", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ code, input: userInput }),
-      });
 
-      if (!response.ok) {
-        // Handle non-successful response
-        const errorMessage = await response.text();
-        setError(errorMessage);
-      }
-
-      const result = await response.json();
-      setOutput(result);
-      setError(null); // Clear error state
-    } catch (error) {
-      console.error("Error executing Python code:", error);
-      // throw error;
-    }
+    socket.emit("python", { code });
   };
 
   return (
@@ -62,7 +78,7 @@ const App: React.FC = () => {
       <main className="flex items-start h-full bg-[#272822]">
         <CodeEditor onExecuteCode={executeCode} />
         <div className="flex flex-col flex-1">
-          <CodeInput onUserInputChange={setUserInput} />
+          <CodeInput />
           <CodeOutput output={output} otherError={error} />
         </div>
       </main>

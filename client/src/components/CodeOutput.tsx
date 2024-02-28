@@ -19,8 +19,6 @@ const CodeOutput: React.FC<OutputSectionProps> = ({ output, otherError }) => {
   const outputLines = typeof stdout === "string" ? stdout.split("\n") : [];
   const errorLines = typeof stderr === "string" ? stderr.split("\n") : [];
 
-  console.log("outputLines:", output);
-
   return (
     <div className="text-white h-full flex-1  bg-[#272822]">
       <div className="flex h-full bg-[#2D2F34] border-b border-b-gray-700">
