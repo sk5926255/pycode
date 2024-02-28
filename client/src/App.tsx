@@ -24,7 +24,6 @@ const App: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   const socket = io("http://localhost:4001");
-
   useEffect(() => {
     socket.on("connect", () => {
       console.log("Connected to server");
@@ -33,10 +32,10 @@ const App: React.FC = () => {
     socket.on("scriptResult", (data) => {
       setOutput((prevState) => ({
         ...prevState,
-        stdout: data.stdout || prevState.stdout,
-        stderr: data.stderr || prevState.stderr,
+        stdout: data.stdout !== undefined ? data.stdout : prevState.stdout,
+        stderr: data.stderr !== undefined ? data.stderr : prevState.stderr,
       }));
-      console.log("Received script result:", output);
+      console.log("Script result:", data);
     });
 
     socket.on("input", (data) => {
@@ -58,7 +57,7 @@ const App: React.FC = () => {
     return () => {
       socket.disconnect();
     };
-  }, [socket, error]);
+  }, [socket]);
 
   const executeCode = async (code: string): Promise<void> => {
     setOutput({

@@ -89,7 +89,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ onExecuteCode }) => {
         enableBasicAutocompletion={true}
         enableLiveAutocompletion={true}
         style={{ height: "calc(100vh - 114px)", width: "100%" }}
-        fontSize="18px"
+        fontSize="12px"
       />
     </div>
   );
